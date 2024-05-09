@@ -1,0 +1,34 @@
+select distinct productline
+from products
+where productLine like '%cars';
+
+SELECT 
+    c.customerNumber,
+    c.customerName,
+    p.productCode,
+    p.productName,
+    SUM(od.quantityOrdered) as Total_Quantity,
+    p.quantityInStock as Total_Inventory,
+    (p.quantityInStock - SUM(od.quantityOrdered)) as Left_Quantity
+FROM 
+    Customers c 
+    INNER JOIN Orders o ON c.customerNumber = o.customerNumber 
+    INNER JOIN OrderDetails od ON o.orderNumber = od.orderNumber
+    INNER JOIN Products p ON od.productCode = p.productCode
+GROUP BY 
+    c.customerNumber,
+    c.customerName,
+    p.productCode,
+    p.productName,
+    p.quantityInStock
+ORDER BY 
+    c.customerNumber;
+
+
+SELECT productLine, COUNT(*) AS TotalproductLineCount
+FROM Products
+WHERE buyPrice > (
+  SELECT AVG(buyPrice)
+  FROM Products
+)
+GROUP BY productLine

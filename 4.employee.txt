@@ -1,0 +1,44 @@
+SELECT *
+FROM emp
+WHERE deptno = 10
+AND salary > 3000;
+
+SELECT first_name, last_name
+FROM emp
+WHERE salary > 2000 AND 
+DATEDIFF((select Max(hire_date) FROM emp), hire_date) < 36
+ORDER BY salary DESC;
+
+SELECT deptno, SUM(salary) AS total_salary
+FROM emp
+GROUP BY deptno;
+
+Select employee number, first name, job title and job title abbreviation from employees table based on following conditions.
+If job title is one among the below conditions, then job title abbreviation column should show below forms.
+●	President then “P”
+●	Sales Manager / Sale Manager then “SM”
+●	Sales Rep then “SR”
+●	Containing VP word then “VP”
+SELECT 
+ EmployeeNumber, 
+ FirstName, 
+CASE
+WHEN jobTitle = 'President' THEN 'P'
+        WHEN jobTitle IN ('Sales Manager (APAC)', 'Sale Manager (EMEA)', 'Sales Manager (NA)') THEN 'SM'
+        WHEN jobTitle = 'Sales Rep' THEN 'SR'
+        WHEN jobTitle LIKE '%VP%' THEN 'VP'
+END AS jobTitleAbbreviation
+FROM 
+    employees;
+
+Show employee number, Sales Person (combination of first and last names of employees), unique customers for each employee number and sort the data by highest to lowest unique customers.
+
+select e.employeenumber as employeenumber,
+    concat(e.firstname,' ', e.lastname) as salesperson,
+    count(distinct c.customernumber) as uniquecustomers
+from employees e
+    inner join customers c 
+    on e.employeenumber = c. salesrepemployeenumber
+group by salesperson, e.employeenumber
+order by uniquecustomers desc;
+

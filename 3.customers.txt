@@ -1,0 +1,83 @@
+select customernumber, customername, state, creditlimit 
+from customers
+where state is not null
+and creditLimit between 50000 and 100000
+order by creditlimit desc;
+
+select 
+ year(orderdate) as year,
+concat('Q', QUARTER(orderDate)) AS quarter,
+count(distinct customernumber) as unique_customers,
+count(ordernumber) as total_orders
+from
+  orders
+group by  year(orderdate), QUARTER
+order by  year(orderdate), QUARTER;
+
+
+select e.employeenumber as employeenumber,
+    concat(e.firstname,' ', e.lastname) as salesperson,
+    count(distinct c.customernumber) as uniquecustomers
+from employees e
+    inner join customers c 
+    on e.employeenumber = c. salesrepemployeenumber
+group by salesperson, e.employeenumber
+order by uniquecustomers desc;
+
+SELECT 
+    c.customerNumber,
+    c.customerName,
+    p.productCode,
+    p.productName,
+    SUM(od.quantityOrdered) as Total_Quantity,
+    p.quantityInStock as Total_Inventory,
+    (p.quantityInStock - SUM(od.quantityOrdered)) as Left_Quantity
+FROM 
+    Customers c 
+    INNER JOIN Orders o ON c.customerNumber = o.customerNumber 
+    INNER JOIN OrderDetails od ON o.orderNumber = od.orderNumber
+    INNER JOIN Products p ON od.productCode = p.productCode
+GROUP BY 
+    c.customerNumber,
+    c.customerName,
+    p.productCode,
+    p.productName,
+    p.quantityInStock
+ORDER BY 
+    c.customerNumber;
+
+SELECT customerNumber, customerName
+FROM customers
+WHERE customerNumber NOT IN (SELECT customerNumber FROM orders);
+
+SELECT c.customernumber
+FROM customers AS c
+LEFT JOIN orders AS o ON c.customernumber = o.customernumber
+WHERE o.orderNumber IS NULL;
+
+
+select
+ c.customernumber, c.customername, count(o.ordernumber) as Total_orders
+from
+ customers c
+left join 
+ orders o 
+on 
+ c.customerNumber = o.customerNumber
+group by 
+ c.customernumber, c.customername
+ 
+union
+
+select
+ c.customernumber, c.customername, count(o.ordernumber) as Total_orders
+from
+ customers c
+Right join 
+ orders o 
+on 
+ c.customerNumber = o.customerNumber
+group by 
+ c.customernumber, c.customername;
+
+

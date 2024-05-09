@@ -1,0 +1,38 @@
+UPDATE emp
+SET deptno = 
+	CASE
+		WHEN emp_no %2 = 0 then 20
+        WHEN emp_no %3 = 0 then 30
+        WHEN emp_no %4 = 0 then 40
+        WHEN emp_no %5 = 0 then 50
+		ELSE  10
+	END;
+
+SELECT
+    CASE
+        WHEN marks >= 80 AND marks < 100 THEN 'Distinction'
+        WHEN marks >= 60 AND marks < 80 THEN 'First Class'
+        WHEN marks >= 40 AND marks < 60 THEN 'Second Class'
+        ELSE 'Fail'
+    END AS grade,
+
+SELECT orderNumber, status, 
+       CASE
+           WHEN comments IS NULL THEN '-'
+           ELSE comments
+       END AS comments
+FROM orders
+WHERE status = 'shipped';
+
+SELECT 
+ EmployeeNumber, 
+ FirstName, 
+CASE
+WHEN jobTitle = 'President' THEN 'P'
+        WHEN jobTitle IN ('Sales Manager (APAC)', 'Sale Manager (EMEA)', 'Sales Manager (NA)') THEN 'SM'
+        WHEN jobTitle = 'Sales Rep' THEN 'SR'
+        WHEN jobTitle LIKE '%VP%' THEN 'VP'
+END AS jobTitleAbbreviation
+FROM 
+    employees;
+

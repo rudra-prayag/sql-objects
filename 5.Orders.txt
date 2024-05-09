@@ -1,0 +1,171 @@
+Find the ordernumber, status, customernumber, customername and comments for all orders that are ‘Disputed [table: orders, customers]
+Joins vs subqueries
+
+SELECT 
+    orderNumber,
+    status,
+    customerNumber,
+    (SELECT customerName FROM customers WHERE customerNumber = orders.customerNumber) AS customerName,
+    comments
+FROM 
+    orders
+WHERE 
+    status = 'Disputed';
+
+1.	For Weekday Vs Weekend Payments
+
+SELECT 
+       CASE 
+        WHEN DATEPART(weekday, order_purchase_timestamp) IN (1, 7) 
+	 THEN 'Weekend'
+        ELSE 'Weekday'
+    	 END AS payment_day,
+    	COUNT(*) AS payment_count
+FROM olist_orders_dataset
+GROUP BY 
+    	CASE 
+        WHEN DATEPART(weekday, order_purchase_timestamp) IN (1, 7) THEN 'Weekend'
+        ELSE 'Weekday'
+    	END;
+•	CAST(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM olist_orders_dataset) AS 
+•	decimal(10, 2)) AS payment_percentage
+
+Number of Orders with review score 5 and payment type as credit card.
+SELECT COUNT(*) AS order_count
+FROM olist_order_reviews_dataset r
+JOIN olist_order_payments_dataset p ON r.order_id = p.order_id
+WHERE r.review_score = 5 AND p.payment_type = 'credit_card';
+
+2. SELECT round(AVG(oi.price),2) AS average_price, round(AVG(op.payment_value),2) AS average_payment
+FROM olist_order_items_dataset oi
+JOIN olist_orders_dataset o ON oi.order_id = o.order_id
+JOIN olist_customers_dataset c ON o.customer_id = c.customer_id
+JOIN olist_order_payments_dataset op ON o.order_id = op.order_id
+WHERE c.customer_city = 'Sao Paulo';
+
+3. SELECT AVG(DATEDIFF(day, o.order_purchase_timestamp, o.order_delivered_customer_date)) AS average_delivery_days
+FROM olist_orders_dataset o
+JOIN olist_order_items_dataset oi ON o.order_id = oi.order_id
+JOIN olist_products_dataset p ON oi.product_id = p.product_id
+WHERE p.product_category_name = 'pet_shop';
+
+4. Relationship between shipping days Vs review scores.
+SELECT review_score, AVG(DATEDIFF(day, order_purchase_timestamp, 
+	order_delivered_customer_date)) AS average_shipping_days
+FROM olist_orders_dataset o
+JOIN olist_order_reviews_dataset r ON o.order_id = r.order_id
+GROUP BY review_score
+
+5.
+Show the orderNumber, status and comments from orders table for shipped status only. If some comments are having null values then show them as “-“.
+
+SELECT orderNumber, status, 
+       CASE
+           WHEN comments IS NULL THEN '-'
+           ELSE comments
+       END AS comments
+FROM orders
+WHERE status = 'shipped';
+
+6.
+
+For every year and every quarter, find the unique customers and total orders from orders table. Make sure to show the quarter as Q1,Q2 etc.
+
+select 
+ year(orderdate) as year,
+concat('Q', QUARTER(orderDate)) AS quarter,
+count(distinct customernumber) as unique_customers,
+count(ordernumber) as total_orders
+from
+  orders
+group by  year(orderdate), QUARTER
+order by  year(orderdate), QUARTER;
+
+7.
+Show total quantities, total quantities in stock, left over quantities for each product and each customer. Sort the data by customer number.
+
+SELECT 
+    c.customerNumber,
+    c.customerName,
+    p.productCode,
+    p.productName,
+    SUM(od.quantityOrdered) as Total_Quantity,
+    p.quantityInStock as Total_Inventory,
+    (p.quantityInStock - SUM(od.quantityOrdered)) as Left_Quantity
+FROM 
+    Customers c 
+    INNER JOIN Orders o ON c.customerNumber = o.customerNumber 
+    INNER JOIN OrderDetails od ON o.orderNumber = od.orderNumber
+    INNER JOIN Products p ON od.productCode = p.productCode
+GROUP BY 
+    c.customerNumber,
+    c.customerName,
+    p.productCode,
+    p.productName,
+    p.quantityInStock
+ORDER BY 
+    c.customerNumber;
+8.
+Calculate year wise, month name wise count of orders and year over year (YoY) percentage change. Format the YoY values in no decimals and show in % sign.
+SELECT
+    YEAR(orderDate) AS year,
+    DATE_FORMAT(orderDate, '%b') AS monthName,
+    COUNT(*) AS orderCount,
+    CONCAT(FORMAT((COUNT(*) - LAG(COUNT(*)) OVER (ORDER BY YEAR(orderDate), MONTH(orderDate))) / 
+    LAG(COUNT(*)) OVER (ORDER BY YEAR(orderDate), MONTH(orderDate)) * 100, 0), '%') AS YoYPercentageChange
+FROM orders
+GROUP BY YEAR(orderDate), monthName, MONTH(orderDate)
+ORDER BY YEAR(orderDate), MONTH(orderDate);
+
+9.
+Display the customer numbers and customer names from customers table who have not placed any orders using subquery
+
+SELECT customerNumber, customerName
+FROM customers
+WHERE customerNumber NOT IN (SELECT customerNumber FROM orders);
+
+SELECT c.customernumber
+FROM customers AS c
+LEFT JOIN orders AS o ON c.customernumber = o.customernumber
+WHERE o.orderNumber IS NULL;
+
+10.
+Write a full outer join between customers and orders using union and get the customer number, customer name, count of orders for every customer.
+
+
+select
+ c.customernumber, c.customername, count(o.ordernumber) as Total_orders
+from
+ customers c
+left join 
+ orders o 
+on 
+ c.customerNumber = o.customerNumber
+group by 
+ c.customernumber, c.customername
+ 
+union
+
+select
+ c.customernumber, c.customername, count(o.ordernumber) as Total_orders
+from
+ customers c
+Right join 
+ orders o 
+on 
+ c.customerNumber = o.customerNumber
+group by 
+ c.customernumber, c.customername;
+
+
+11.
+For each order number count the number of products and then find the min and max of the values among count of orders.
+select min(quantityordered) as MIn_total, max(quantityordered) as Max_total
+from(
+select ordernumber, count(*) as quantityordered
+from orderdetails
+group by orderNumber
+) as quantityordered;
+
+
+

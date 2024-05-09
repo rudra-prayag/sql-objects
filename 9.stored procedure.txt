@@ -1,0 +1,82 @@
+Write a stored procedure that accepts the month and year as inputs and prints the ordernumber, orderdate and status of the orders placed in that month.
+DELIMITER //
+CREATE PROCEDURE GetOrdersByMonthAndYear (
+    IN p_month INT,
+    IN p_year INT
+)
+BEGIN
+    SELECT 
+        orderNumber,
+        orderDate,
+        status
+    FROM 
+        orders
+    WHERE 
+        MONTH(orderDate) = p_month
+        AND YEAR(orderDate) = p_year;
+END//
+
+DELIMITER ;
+CALL GetOrdersByMonthAndYear(6, 2004);
+
+Create a stored procedure GetCustomerLevel which takes input as customer number and gives the output as either Platinum, Gold or Silver as per below criteria.
+
+delimiter //
+create procedure get_status1(in p_custno int, out p_status varchar(50))
+begin
+declare lcl_crdtlmt decimal;
+
+select creditlimit into lcl_crdtlmt
+from customers
+where customernumber = p_custno;
+
+if lcl_crdtlmt > 100000 then 
+	set p_status="platinum";
+elseif lcl_crdtlmt between 25000 and 100000 then 
+	set p_status = "gold";
+else 
+set p_status = "silver"; 
+end if; 
+end //
+
+call get_status1(103,@status);
+select @status;
+
+2.
+Create a stored procedure Get_country_payments which takes in year and country as inputs and gives year wise, country wise total amount as an output. Format the total amount to nearest thousand unit (K)
+
+DELIMITER //
+CREATE PROCEDURE Get_country_payments(IN p_year INT, IN p_country VARCHAR(50))
+BEGIN
+	SELECT
+	YEAR(p.paymentDate) AS payment_year,
+	c.country,
+	CONCAT(FORMAT(SUM(p.amount) / 1000, 0), 'K') AS total_amount
+FROM
+	payments p
+JOIN
+	customers c ON p.customerNumber = c.customerNumber
+WHERE
+	YEAR(p.paymentDate) = p_year
+	AND c.country = p_country
+GROUP BY
+        payment_year,
+        c.country;	
+END //
+CALL Get_country_payments(2002, 'USA');
+
+3. 
+DELIMITER //
+CREATE PROCEDURE `GetCustomers`()
+BEGIN
+SELECT customerNumber, customerName, country
+From Customers
+WHERE COUNTRY IN ("Australia", "UK")
+ORDER BY country;
+
+END//
+
+
+
+
+

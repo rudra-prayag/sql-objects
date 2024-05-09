@@ -1,0 +1,51 @@
+Replicate the functionality of 'on delete cascade' and 'on update cascade' using triggers on movies and rentals tables. Note: Both tables - movies and rentals - don't have primary or foreign keys. Use only triggers to implement the above.
+
+CREATE TABLE rental_movies (
+    mv_id INT,
+    title VARCHAR(100),
+    category VARCHAR(50),
+    fname VARCHAR(50),
+    lname VARCHAR(50)
+);
+delimiter //
+
+CREATE TRIGGER movies_delete_cascade
+BEFORE DELETE ON movies
+FOR EACH ROW
+BEGIN
+     INSERT INTO rental_movies (mv_id,title,category,lname)
+    VALUES(OLD.id,OLD.title,OLD.category);
+END//
+
+DROP TRIGGER IF EXISTS movies_delete_cascade;
+DELETE FROM movies WHERE id = 7;
+
+
+Create before insert trigger to make sure any new value of Working_hours, if it is negative, then it should be inserted as positive
+
+create table emp_bit(
+name varchar(55),
+occupation varchar (100),
+working_date date,
+working_hours int
+);
+insert into emp_bit values
+('Robin','scientist','2020-10-04',12),
+('warner','engineer','2020-10-04',10),
+('Peter','Actor','2020-10-04',13),
+('marco','doctor','2020-10-04',14),
+('brayden','teacher','2020-10-04',12),
+('Antonio', 'Business','2020-10-04',11);
+
+delimiter //
+create trigger BIT_emp1
+before insert 
+on emp_bit for each row
+begin
+if new.working_hours<0 then 
+set new.working_hours = - new.working_hours;
+end if;
+
+end //
+insert into emp_bit
+values("kedar","lawyer",'2020-10-04',-8);

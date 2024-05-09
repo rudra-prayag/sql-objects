@@ -1,0 +1,92 @@
+CREATE TABLE countries(
+Name VARCHAR(100), Population INT, Capital varchar(100)
+);
+INSERT INTO countries (name, population, capital)
+VALUES 
+('China',1382,'Beijing'),
+('India', 1326, 'Delhi')
+
+CREATE TABLE Product_mod (
+product_id INT PRIMARY KEY,
+    product_name VARCHAR(255)
+);
+
+ALTER TABLE Product_mod
+MODIFY COLUMN product_name VARCHAR(255) NOT NULL UNIQUE;
+ALTER TABLE Product_mod
+MODIFY COLUMN product_id INT AUTO_INCREMENT;
+
+CREATE TABLE rental_movies (
+    mv_id INT,
+    title VARCHAR(100),
+    category VARCHAR(50),
+    fname VARCHAR(50),
+    lname VARCHAR(50)
+);
+
+create table laptop(
+lap_name varchar(100)
+);
+
+Insert into laptop
+values ("HP"),("dell");
+
+Create table colors(
+color_name varchar(100)
+);
+
+Insert into colors
+values("white"), ("black"), ("silver"),("grey");
+
+CREATE TABLE Project (
+    EmployeeID INT,
+    FullName VARCHAR(50),
+    Gender VARCHAR(10),
+    ManagerID INT
+);
+CREATE TABLE facility (
+    Facility_ID INT PRIMARY KEY,
+    Name VARCHAR(255),
+    State VARCHAR(255),
+    Country VARCHAR(255)
+);
+
+ALTER TABLE facility
+MODIFY Facility_ID INT AUTO_INCREMENT;
+
+ALTER TABLE facility
+ADD COLUMN city VARCHAR (255) NOT NULL AFTER Name;
+
+CREATE TABLE university (
+    ID INT PRIMARY KEY,
+    Name VARCHAR(255)
+);
+INSERT INTO university (ID, Name)
+VALUES
+	(1, "       Pune          University     "), 
+               (2, "  Mumbai          University     "),
+              (3, "     Delhi   University     "),
+              (4, "Madras University"),
+              (5, "Nagpur University");
+              
+UPDATE university
+SET Name = CONCAT(TRIM(REPLACE(REPLACE(Name, '  ', '’), 'University', '')), ' University ');
+
+DELETE FROM university;
+
+set sql_safe_updates = 0;
+
+CREATE TABLE Project (
+    EmployeeID INT,
+    FullName VARCHAR(50),
+    Gender VARCHAR(10),
+    ManagerID INT
+);
+
+INSERT INTO Project VALUES(1, 'Pranaya', 'Male', 3);
+INSERT INTO Project VALUES(2, 'Priyanka', 'Female', 1);
+INSERT INTO Project VALUES(3, 'Preety', 'Female', NULL);
+INSERT INTO Project VALUES(4, 'Anurag', 'Male', 1);
+INSERT INTO Project VALUES(5, 'Sambit', 'Male', 1);
+INSERT INTO Project VALUES(6, 'Rajesh', 'Male', 3);
+INSERT INTO Project VALUES(7, 'Hina', 'Female', 3);

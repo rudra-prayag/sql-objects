@@ -1,0 +1,29 @@
+For every year, find the minimum amount value from payments table
+
+SELECT YEAR(paymentDate) AS paymentYear, MIN(amount) AS minAmount
+FROM payments
+GROUP BY YEAR(paymentDate)
+order by year(paymentdate);
+
+total amount of each month of each year
+
+select
+	year(paymentDate)As "Year",
+Monthname(paymentDate)As "Month,
+SUM(amount)as "Total Amount"
+From Payments
+Group BY Year, Month
+Order By paymentDate;
+
+Show the formatted amount in thousands unit (e.g. 500K, 465K etc.) for every month (e.g. Jan, Feb etc.) with filter on total amount as 500000 to 1000000. Sort the output by total amount in descending mode
+SELECT 
+    DATE_FORMAT(paymentDate, '%b') AS Month,
+    CONCAT(FORMAT(amount/1000, 0), 'K') AS FormattedAmount
+FROM 
+    payments
+WHERE 
+    amount >= 50000 AND amount <= 100000
+GROUP BY 
+    Month, amount
+ORDER BY 
+     amount DESC;

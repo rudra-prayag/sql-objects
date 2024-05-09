@@ -1,0 +1,33 @@
+Create a view called emp_sal on the emp table by selecting the following fields in the order of highest salary to the lowest salary.
+
+emp_no, first_name, last_name, salary
+
+CREATE VIEW emp_sal AS
+SELECT emp_ID, first_name, last_name, salary
+FROM emp
+ORDER BY salary DESC;
+
+CREATE VIEW rentals AS
+SELECT mv.title, mv.category, ifnull(mm.first_name,'-')AS fname, ifnull(mm.last_name,'-')as lname
+from movies mv
+left join members mm ON mv.id = mm.movieid;
+select * from rentals
+
+
+Create the view products status. 
+Show year wise total products sold. 
+Also find the percentage of total value for each year. 
+
+
+CREATE VIEW products_status AS
+SELECT
+    YEAR(o.orderDate) AS orderYear,
+    count(od.quantityOrdered) AS 'values',
+CONCAT('(', ROUND((SUM(od.quantityOrdered * od.priceEach) / (SELECT SUM(quantityOrdered * priceEach) FROM orderdetails)) * 100, 2), '%)') as percentage
+FROM
+    orders o
+JOIN
+    orderdetails od ON o.orderNumber = od.orderNumber
+GROUP BY
+    orderYear;
+
